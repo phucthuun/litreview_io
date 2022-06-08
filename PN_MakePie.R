@@ -63,7 +63,7 @@ PN_MakePie <- function(reviewtable=reviewtable, whatvar = 'Task_type/Encoding_in
     geom_bar(width = 1, stat="identity")+  
     coord_polar(theta = "y", start = 4*pi/2-.5, direction = -1)+
     theme_void()+ 
-    labs(title = pietitle)+
+    # labs(title = pietitle)+
     guides(fill = guide_legend(ncol=1, byrow=TRUE))+
     scale_fill_manual('',values=c(projectPalette[1:nrow(df)],rep('#ffffff',6-nrow(df))),drop=F,
                       labels = pielabels) +
