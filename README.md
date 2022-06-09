@@ -3,8 +3,7 @@
 
 The shiny app is an interactive version of the study...
 <br>
-[Link](https://phucthuun.shinyapps.io/litreview_io/) or [Link (back-up)](https://phucthuun.shinyapps.io/litreviewCOMIC/)
-to deployed app 
+[Link](https://phucthuun.shinyapps.io/litreview_io/) to deployed app 
 
 This version has simple layout, can be explored by downloading the zip folder from github or on shinyapps.io
 
