@@ -9,6 +9,8 @@ rm(list = ls())
   library(shinythemes)
   library(bslib)
   library(shinycssloaders)
+  library(htmltools)
+  library(bsplus)
 
 
   library(stringr)
@@ -57,7 +59,7 @@ rm(list = ls())
       Article_ID = str_extract_all(Entry_ID, "\\w+(?=,)"),
       Task_number = str_extract_all(Entry_ID, "(?<=,)\\w+"), .before = Entry_ID
     )
-
+  
   # for Delay
   delay1 <- read_excel("Lit_Review_QC.xlsx") %>%
     select(
@@ -110,7 +112,7 @@ ui <- tagList(
     .navbar-default .navbar-brand{color: #006c66;}
     .navbar-header { width:100% }
     .navbar-nav > li > a,
-    .navbar-brand {padding-top:10px !important; padding-bottom:25px; height: 60px; width: 100%; text-align: right}
+    .navbar-brand {padding-top:8px !important; padding-bottom:20px; height: 36px; width: 100%; text-align: right}
     .navbar-nav li a:hover, .navbar-nav > .active > a { color: #fff !important; background-color:#006c66 !important; 
                                                         border-radius: 0px; border-top: 2px solid #eeeeee; 
                                                         }
@@ -149,6 +151,7 @@ ui <- tagList(
 
     /* collapse button*/
     .fa, .fas {color: black;}
+    
          ")
     )
   ),
@@ -158,7 +161,7 @@ ui <- tagList(
     # App Title
     # title = div(img(src = "MPIB_Logo_EN_horizontal_RGB_White.png", height = "90px")),
     title = tags$a(href = 'https://www.mpib-berlin.mpg.de/research/research-centers/lip/projects/rhyme',
-                   tags$img(src = 'MPIB_Logo_EN_horizontal_RGB_White.png', height= "90px", align = "right")),
+                   tags$img(src = 'MPIB_Logo_EN_horizontal_RGB_White.png', height= "75px", align = "right")),
     theme = shinytheme("cosmo"),
     fluid = T,
     footer = tags$div(class = "footer", includeHTML("end_text.html")),
@@ -166,7 +169,7 @@ ui <- tagList(
     header = tags$style("
     .footer {width: 100%; height: 100%;background-color: #ffffff; bottom:100%; padding:0 0 50 0;}
     .navbar-right {float: right !important;}
-    body {background:#fff; padding-top: 110px;}
+    body {background:#fff; padding-top: 90px;}
                         "),
 
 
@@ -222,57 +225,36 @@ ui <- tagList(
           8,
           p(),
           fluidRow(box(solidHeader = T, status = "warning", width = NULL,
-                       h4(strong("Publications over year", style = "color: #006c66; font-size: 27px")),
+                       p(strong("Publications over year", style = "color: #006c66; font-size: 27px")),
                        p("A timeline plot depicting the number of publications across years.", style = "font-size: 18px;"),
                        plotlyOutput("illustration_year")%>% withSpinner(type=4,color="#006c66"))),
 
           fluidRow(box(solidHeader = T, status = "warning", width = NULL,
-                       h4(strong("Locations of data collection", style = "color: #006c66; font-size: 27px")),
+                       p(strong("Locations of data collection", style = "color: #006c66; font-size: 27px")),
                        p("A heatmap of the data collection locations from the selected publications.
                   Color intensity indicates the number of entries.", style = "font-size: 18px;"),
                        plotlyOutput("illustration_WM")%>% withSpinner(type=4,color="#006c66"))),
 
-          # fluidRow( # class='overview',
-          #   column(
-          #     6,
-          #     box(
-          #       solidHeader = T, status = "warning", width = NULL,
-          #       h4(strong("Locations of data collection", style = "color: #006c66; font-size: 27px")),
-          #       p("A heatmap of the data collection locations from the selected publications.
-          #                                               Color intensity indicates the number of entries.", style = "font-size: 18px;"),
-          #       plotlyOutput("illustration_WM") %>% withSpinner(type = 4, color = "#006c66")
-          #     )
-          #   ),
-          #   column(
-          #     6,
-          #     box(
-          #       solidHeader = T, status = "warning", width = NULL,
-          #       h4(strong("Publications over year", style = "color: #006c66; font-size: 27px")),
-          #       p("A timeline plot depicting the number of publications across years.", style = "font-size: 18px;"),
-          #       plotlyOutput("illustration_year") %>% withSpinner(type = 4, color = "#006c66")
-          #     )
-          #   )
-          # ),
           
           fluidRow(box(
             solidHeader = T, status = "warning", width = NULL,
-            h4(strong("Overall literature composition", style = "color: #006c66; font-size: 27px")),
+            p(strong("Overall literature composition", style = "color: #006c66; font-size: 27px")),
             p("Pie charts depicting the relative composition of the experimental design, task type,
                                                  and to-be-remembered information method factors from memory development literature.", style = "font-size: 18px;"),
             fluidRow(
               column(
                 4,
-                h4(strong("Design"), align = "center"),
+                p(strong("Design"), align = "center"),
                 plotlyOutput("illustration_pie.design") %>% withSpinner(type = 4, color = "#006c66")
               ),
               column(
                 4,
-                h4(strong("Task type"), align = "center"),
+                p(strong("Task type"), align = "center"),
                 plotlyOutput("illustration_pie.tasktype") %>% withSpinner(type = 4, color = "#006c66")
               ),
               column(
                 4,
-                h4(strong("To-be-remembered information"), align = "center"),
+                p(strong("To-be-remembered information"), align = "center"),
                 plotlyOutput("illustration_pie.tbrinfo") %>% withSpinner(type = 4, color = "#006c66")
               )
             )
@@ -301,11 +283,28 @@ ui <- tagList(
                 class = "exploreSearch",
                 box(
                   title = NULL, solidHeader = TRUE, status = "warning", width = NULL,
-                  h4(strong("Search engine", style = "color: #006c66; font-size: 27px")),
+                  # p(strong("Search engine", style = "color: #006c66; font-size: 27px")),
                   ### instruction ----
-                  fluidRow(includeHTML(("explore_instruction.html"))),
-                  br(),
-
+                  # fluidRow(includeHTML("explore_instruction.html")),
+                  # br(),
+                  
+                  bs_modal(
+                    id = "modal_explore_instruction", 
+                    title = "Use the filter",
+                    body = includeHTML("explore_instruction.html")
+                  ),
+                  div(style="text-align:center; padding: 60px 0px 0px 0px;",
+                    div(style="display: inline-block; font-size:44px; text-align: center;", 
+                        strong("Explore the ",style="color:#000000"),
+                        strong("task entries ",style="color:#006c66"),
+                        strong("of interest",style="color:#000000")),
+                    div(style="display: inline-block; padding: 1px 0em 0em 0; ", 
+                        icon('info-sign', lib = "glyphicon") %>%
+                          bs_attach_modal("modal_explore_instruction")
+                    ),
+                    div(style="", p("Select from the options or enter keywords", style="font-size:18px; text-align: center; padding: 0px 0em 15px 0;")),
+                    
+                  ),
                   ### search engine ====
                   fluidRow(
                     column(1),
@@ -313,13 +312,13 @@ ui <- tagList(
                       width = 5, align = "center",
                       selectizeInput("authors",
                         label = "Author",
-                        choices = df$Authors %>% unlist() %>% str_extract_all("\\w+") %>% unlist() %>% unique() %>% sort(),
+                        choices = reviewtable$Authors %>% unlist() %>% str_extract_all("\\w+") %>% unlist() %>% unique() %>% sort(),
                         multiple = T, options = list(create = TRUE)
                       )
                     ),
                     column(
                       width = 5, align = "center",
-                      selectizeInput("title", label = "Title", choices = unique(df$Title) %>% sort(), multiple = T, options = list(create = TRUE))
+                      selectizeInput("title", label = "Title", choices = unique(reviewtable$Title) %>% sort(), multiple = T, options = list(create = TRUE))
                     ),
                     column(1)
                   ),
@@ -337,19 +336,20 @@ ui <- tagList(
                           min = "1970-01-01", max = "2030-01-01",
                           format = "yyyy", separator = " - "
                         ),
-                        selectizeInput("article_id", "Article id", choices = unique(df$Article_ID), multiple = T, options = list(create = TRUE)),
-                        selectizeInput("article_task", "Task entry", choices = unique(df$Entry_ID), multiple = T)
+                        selectizeInput("article_id", "Article id", choices = unique(reviewtable$Article_ID), multiple = T, options = list(create = TRUE)),
+                        selectizeInput("article_task", "Task entry", choices = unique(reviewtable$Entry_ID), multiple = T)
                       )
                     ),
                     column(3)
                   ),
+                  hr(),
 
                   ### data ====
                   fluidRow(
                     box(
                       title = NULL, solidHeader = TRUE, status = "warning", width = NULL,
-                      p(strong("Search result", style = "color: #006c66")),
-                      DT::dataTableOutput("table")
+                      p(strong("Search result", style = "color: #006c66; font-size: 18px")),
+                      DT::dataTableOutput("table")%>% withSpinner(type=4,color="#006c66")
                     )
                   )
                 )
@@ -359,8 +359,24 @@ ui <- tagList(
               ### HEB ====
               fluidRow(
                 box(
-                  title = NULL, solidHeader = T, status = "warning", width = NULL,
-                  h4(strong("Hierarchical Edge Bundling", style = "color: #006c66; font-size: 27px")),
+                  # title=actionLink("titleId", "Update", icon = icon("circle-info")),
+                  title = NULL,
+                  solidHeader = T, status = "warning", width = NULL,
+                  bs_modal(
+                    id = "modal_HEB_instruction", 
+                    title = "Three modes of visualization",
+                    body = includeHTML("HEB_instruction.html")
+                  ),
+                  div(
+                    div(style="display: inline-block; ", strong("Hierarchical Edge Bundling", style = "color: #006c66; font-size: 27px")),
+                    div(style="display: inline-block; padding: 1px 0em 0em 0; ", 
+                        icon('info-sign', lib = "glyphicon") %>%
+                          bs_attach_modal("modal_HEB_instruction")
+                        )
+                  ),
+                  p("Hierarchical edge bundling plots that visualize the combination of methodological variables for task entries.", style = "font-size: 18px;"),
+                  p(""),
+                  
                   fluidRow(
                     column(8,
                       align = "left",
@@ -375,8 +391,7 @@ ui <- tagList(
                       downloadButton("download", label = "Download data", style = "color: #000000; background-color: #ffffff; border-color: #ffffff")
                     )
                   ),
-                  p("Hierarchical edge bundling plots that visualize
-                                                     the combination of methodological variables for task entries.", style = "font-size: 18px;"),
+                  
                   column(12,
                     align = "center",
                     textOutput("HEBlegend"),
@@ -389,7 +404,7 @@ ui <- tagList(
               fluidRow(
                 box(
                   title = NULL, solidHeader = T, status = "warning", width = NULL,
-                  h4(strong("Delay", style = "color: #006c66; font-size: 27px")),
+                  p(strong("Delay", style = "color: #006c66; font-size: 27px")),
                   p("Delay periods ranging from 0 to 6 years across the five task types across all task entries.", style = "font-size: 18px;"),
                   plotlyOutput("illustration_Delay") %>% withSpinner(type = 4, color = "#006c66")
                 )
@@ -419,7 +434,7 @@ server <- function(input, output, session) {
   })
   # title input
   input.title <- reactive({
-    paste(input$title, collapse = "|")
+    input$title %>% str_replace_all('[^[:alnum:]]','') %>% tolower() %>% paste(collapse = "|")
   })
   # year input
   year_start <- reactive({
@@ -434,7 +449,8 @@ server <- function(input, output, session) {
       filter(
         Year >= year_start() & Year <= year_end(),
         str_detect(Authors, input.authors()),
-        str_detect(Title, input.title())
+        str_detect(Title%>% str_replace_all('[^[:alnum:]]','') %>% tolower(), input.title() #case-insensitive
+                   )
       )
   })
   # Update article_id input
@@ -517,6 +533,7 @@ server <- function(input, output, session) {
   # Render filtered data table
   output$table <- DT::renderDataTable(
     {
+      print(input.title())
       reviewtable.filtered() %>% select(Article_ID, Authors, Title, Year, Task_number)
     },
     options = list(pageLength = 3, scrollX = "250px", autoWidth = TRUE)
@@ -725,6 +742,7 @@ server <- function(input, output, session) {
 
 
   output$illustration_HEB <- renderPlot({
+    
     if (input$HEB_type == "contrast") {
       if (nrow(df.filtered()) > 2) {
         showNotification("Cannot show more than two entries individually. Use the filter to reduce task entries.", type = "error")
@@ -827,6 +845,7 @@ server <- function(input, output, session) {
 
   # Plot
   output$illustration_Delay <- renderPlotly({
+    
     delay1 <- PN_DelayDf_Stack(
       data = delay1.filtered() %>% select(Entry_ID, starts_with("Delay_"), starts_with("Task_type")),
       split.interval = " - "
