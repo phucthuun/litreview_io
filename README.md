@@ -8,5 +8,5 @@ The shiny app is an interactive version from the original publication <strong>Ng
 <p>[Click](https://phucthuun.shinyapps.io/litreview_io/) to deployed app</p> 
 
 ----
-<p>Corresponding authors: [Chi T. Ngo](https://www.mpib-berlin.mpg.de/staff/chi-zoe-ngo) and [Markus Werkle-Bergner](https://www.mpib-berlin.mpg.de/staff/markus-werkle-bergner)</p>
-<p>App developer: [Phuc Thu Uyen Nguyen](https://github.com/phucthuun)</p>
+<p>Corresponding authors: <a href="https://www.mpib-berlin.mpg.de/staff/chi-zoe-ngo">Chi T. Ngo</a> and <a href="https://www.mpib-berlin.mpg.de/staff/markus-werkle-bergner">Markus Werkle-Bergner</a></p>
+<p>App developer: <a href="[https://www.mpib-berlin.mpg.de/staff/chi-zoe-ngo](https://github.com/phucthuun)">Phuc Thu Uyen Nguyen</a></p>
