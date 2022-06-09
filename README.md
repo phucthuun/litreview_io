@@ -8,5 +8,5 @@ The shiny app is an interactive version from the original publication <strong>Ng
 Click [Link](https://phucthuun.shinyapps.io/litreview_io/) to deployed app 
 
 ----
-Corresponding authors: [Chi T. Ngo] (ngo@mpib-berlin.mpg.de) and [Markus Werkle-Bergner] (werkle@mpib-berlin.mpg.de).
+Corresponding authors: [Chi T. Ngo] (https://www.mpib-berlin.mpg.de/staff/chi-zoe-ngo) and [Markus Werkle-Bergner] (https://www.mpib-berlin.mpg.de/staff/markus-werkle-bergner).
 App developer: [Phuc Thu Uyen Nguyen](https://github.com/phucthuun)
