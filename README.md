@@ -2,10 +2,10 @@ WELCOME TO THE PROJECT
 # Mapping Review on Memory Development
 #### A product of the RHYME team at the Max Planck Institute for Human Development 
 
-The shiny app is an interactive version from the original publication <strong>Ngo, C., Buchberger, E., Nguyen, P., Newcombe, N., & Werkle-Bergner, M. (2022, June 3). Building a Cumulative Science of Memory Development. https://doi.org/10.31234/osf.io/dwz2q</strong>
+The shiny app is an interactive version from the original manuscript (authors' information is temporarily removed for during a masked review process)
 
 <br>
-<p><a href="https://phucthuun.shinyapps.io/litreview_io">Click</a> to deployed app</p> 
+<p><a href="https://memdev.shinyapps.io/litreview_io">Click</a> to deployed app</p> 
 
 ---
 <p>Corresponding authors: (authors' information is temporarily removed for a masked review process)
