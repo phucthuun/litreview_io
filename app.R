@@ -57,7 +57,7 @@ rm(list = ls())
   reviewtable <- read_excel("Lit_Review_Preprocessed.xlsx") %>%
     mutate(
       Article_ID = str_extract_all(Entry_ID, "\\w+(?=,)"),
-      Task_number = str_extract_all(Entry_ID, "(?<=,)\\w+"), .before = Entry_ID
+      Task_number = str_extract_all(Entry_ID, "(?<=,\\s)\\w+"), .before = Entry_ID
     )
   
   # for Delay
@@ -159,9 +159,7 @@ ui <- tagList(
   navbarPage(
     id = "wholePage",
     # App Title
-    # title = div(img(src = "MPIB_Logo_EN_horizontal_RGB_White.png", height = "90px")),
-    title = tags$a(href = 'https://www.mpib-berlin.mpg.de/research/research-centers/lip/projects/rhyme',
-                   tags$img(src = 'MPIB_Logo_EN_horizontal_RGB_White.png', height= "75px", align = "right")),
+    title = "",
     theme = shinytheme("cosmo"),
     fluid = T,
     footer = tags$div(class = "footer", includeHTML("end_text.html")),
@@ -349,7 +347,7 @@ ui <- tagList(
                     box(
                       title = NULL, solidHeader = TRUE, status = "warning", width = NULL,
                       p(strong("Search result", style = "color: #006c66; font-size: 18px")),
-                      DT::dataTableOutput("table")%>% withSpinner(type=4,color="#006c66")
+                      dataTableOutput("table")%>% withSpinner(type=4,color="#006c66")
                     )
                   )
                 )
@@ -531,12 +529,11 @@ server <- function(input, output, session) {
 
 
   # Render filtered data table
-  output$table <- DT::renderDataTable(
+  output$table <- renderDataTable(
     {
-      print(input.title())
       reviewtable.filtered() %>% select(Article_ID, Authors, Title, Year, Task_number)
     },
-    options = list(pageLength = 3, scrollX = "250px", autoWidth = TRUE)
+    options = list(pageLength = 5, scrollX = "250px", autoWidth = TRUE, dom = 'tp')
   )
 
   # OVERVIEW ----
