@@ -8,6 +8,6 @@ WELCOME TO THE PROJECT
 <br>
 <strong>All data and scripts from the project are available</strong>
 <li>Shiny app web design <a href="https://anonymous.4open.science/r/litreview_io-C305">Click</a></li>
-<li>Similarity calculation pipeline <a href="https://anonymous.4open.science/r/litreview_simcalc-pipeline-68F1">Click</a></li>
+<li>Similarity calculation pipeline <a href="https://anonymous.4open.science/r/litreview_simcalc-pipeline-68F1/README.md">Click</a></li>
 ---
 <p>Corresponding authors: (authors' information is temporarily removed for a masked review process)
