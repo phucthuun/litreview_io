@@ -1,7 +1,8 @@
 WELCOME TO THE PROJECT
 # Mapping Review on Memory Development
 
-The shiny app is an interactive version from the original manuscript (authors' information is temporarily removed during a masked review process)
+<p>The shiny app is an interactive version from the original manuscript (authors' information is temporarily removed during a masked review process)</p>
+
 
 <br>
 <p><a href="https://memdev.shinyapps.io/litreview_io">Click</a> to deployed app</p> 
