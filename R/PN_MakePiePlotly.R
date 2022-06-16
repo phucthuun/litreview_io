@@ -1,5 +1,4 @@
 # This function takes the non-binary dataset and a variable of interest and produces pie chart
-
 PN_MakePiePlotly <- function(reviewtable=reviewtable, whatvar = 'Task_type/Encoding_instruction/Design/To_be_remembered_information'){
   
   
