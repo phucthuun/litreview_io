@@ -11,6 +11,7 @@ rm(list = ls())
   library(shinycssloaders)
   library(htmltools)
   library(bsplus)
+  library(fontawesome)
   
   
   library(stringr)
@@ -107,22 +108,21 @@ ui <- tagList(
     tags$style(
       HTML("
 
-    
-    .navbar {background-color: #006c66 !important; color: #006c66;border-color: #f5f5f5;}
+   .navbar {background-color: #006c66 !important; color: #006c66;border-color: #f5f5f5;}
     .navbar-default .navbar-brand{color: #006c66;}
     .navbar-header { width:100% }
     .navbar-nav > li > a,
     .navbar-brand {padding-top:8px !important; padding-bottom:20px; height: 36px; width: 100%; text-align: right}
-    .navbar-nav li a:hover, .navbar-nav > .active > a { color: #fff !important; background-color:#006c66 !important; 
-                                                        border-radius: 0px; border-top: 2px solid #eeeeee; 
+    .navbar-nav li a:hover, .navbar-nav > .active > a { color: #fff !important; background-color:#006c66 !important;
+                                                        border-radius: 0px; border-top: 2px solid #eeeeee;
                                                         }
-    
-    
+
+
     /* Font on tab menu*/
     .nav-tabs {font-size: 20px }
-    
+
     #method {background-color: #DEDEDE;}
-    
+
 
     .skin-blue .main-sidebar {background-color:  #ffffff;}
     .homebox{background-color: #ffffff;}
@@ -155,7 +155,6 @@ ui <- tagList(
          ")
     )
   ),
-  
   navbarPage(
     id = "wholePage",
     # App Title
@@ -222,43 +221,43 @@ ui <- tagList(
         column(
           8,
           p(),
-          fluidRow(box(solidHeader = T, status = "warning", width = NULL,
-                       p(strong("Publications over year", style = "color: #006c66; font-size: 27px")),
-                       p("A timeline plot depicting the number of publications across years.", style = "font-size: 18px;"),
-                       plotlyOutput("illustration_year")%>% withSpinner(type=4,color="#006c66"))),
-          
-          fluidRow(box(solidHeader = T, status = "warning", width = NULL,
-                       p(strong("Locations of data collection", style = "color: #006c66; font-size: 27px")),
-                       p("A heatmap of the data collection locations from the selected publications.
+          fluidRow(box(
+            solidHeader = T, status = "warning", width = NULL,
+            p(strong("Publications over year", style = "color: #006c66; font-size: 27px")),
+            p("A timeline plot depicting the number of publications across years.", style = "font-size: 18px;"),
+            plotlyOutput("illustration_year") %>% withSpinner(type = 4, color = "#006c66")
+          )),
+          fluidRow(box(
+            solidHeader = T, status = "warning", width = NULL,
+            p(strong("Locations of data collection", style = "color: #006c66; font-size: 27px")),
+            p("A heatmap of the data collection locations from the selected publications.
                   Color intensity indicates the number of entries.", style = "font-size: 18px;"),
-                       plotlyOutput("illustration_WM")%>% withSpinner(type=4,color="#006c66"))),
-          
-          
+            plotlyOutput("illustration_WM") %>% withSpinner(type = 4, color = "#006c66")
+          )),
           fluidRow(box(
             solidHeader = T, status = "warning", width = NULL,
             p(strong("Overall literature composition", style = "color: #006c66; font-size: 27px")),
             p("Pie charts depicting the relative composition of the experimental design, task type,
                                                  and to-be-remembered information method factors from memory development literature.", style = "font-size: 18px;"),
-            fluidRow(align="center",
-                     column(
-                       4,
-                       p(strong("Design"), align = "center"),
-                       div(plotlyOutput("illustration_pie.design") %>% withSpinner(type = 4, color = "#006c66"),align="center")
-                     ),
-                     column(
-                       4,
-                       p(strong("Task type"), align = "center"),
-                       div(plotlyOutput("illustration_pie.tasktype") %>% withSpinner(type = 4, color = "#006c66"),align="center")
-                     ),
-                     column(
-                       4,
-                       p(strong("To-be-remembered information"), align = "center"),
-                       div(plotlyOutput("illustration_pie.tbrinfo") %>% withSpinner(type = 4, color = "#006c66"),align="center")
-                     ),
+            fluidRow(
+              align = "center",
+              column(
+                4,
+                p(strong("Design"), align = "center"),
+                div(plotlyOutput("illustration_pie.design") %>% withSpinner(type = 4, color = "#006c66"), align = "center")
+              ),
+              column(
+                4,
+                p(strong("Task type"), align = "center"),
+                div(plotlyOutput("illustration_pie.tasktype") %>% withSpinner(type = 4, color = "#006c66"), align = "center")
+              ),
+              column(
+                4,
+                p(strong("To-be-remembered information"), align = "center"),
+                div(plotlyOutput("illustration_pie.tbrinfo") %>% withSpinner(type = 4, color = "#006c66"), align = "center")
+              ),
             )
           )),
-          
-          
           fluidRow(
             box(
               title = NULL, solidHeader = T, status = "warning", width = NULL,
@@ -267,10 +266,6 @@ ui <- tagList(
               plotlyOutput("illustration_Delay") %>% withSpinner(type = 4, color = "#006c66")
             )
           )
-          
-          
-          
-          
         ),
         column(2)
       )
@@ -301,22 +296,28 @@ ui <- tagList(
                   # br(),
                   
                   bs_modal(
-                    id = "modal_explore_instruction", 
+                    id = "modal_explore_instruction",
                     title = "Use the filter",
                     body = includeHTML("explore_instruction.html")
                   ),
-                  div(style="text-align:center; padding: 60px 0px 0px 0px;",
-                      div(style="display: inline-block; font-size:44px; text-align: center;", 
-                          strong("Explore the ",style="color:#000000"),
-                          strong("task entries ",style="color:#006c66"),
-                          strong("of interest",style="color:#000000")),
-                      div(style="display: inline-block; padding: 1px 0em 0em 0; ", 
-                          icon('info-sign', lib = "glyphicon") %>%
-                            bs_attach_modal("modal_explore_instruction")
-                      ),
-                      div(style="", p("Select from the options or enter keywords", style="font-size:18px; text-align: center; padding: 0px 0em 15px 0;")),
-                      
+                  div(
+                    style = "text-align:center; padding: 60px 0px 00px 0px;",
+                    div(
+                      style = "display: inline-block; font-size:44px; text-align: center;",
+                      strong("Explore the ", style = "color:#000000"),
+                      strong("task entries ", style = "color:#006c66"),
+                      strong("of interest", style = "color:#000000")
+                    ),
+                    div(
+                      style = "font-size:20px; color:#006c66; display: inline-block; padding: 0px 0em 0em 0; ",
+                      icon("info-sign", lib = "glyphicon") %>%
+                        bs_attach_modal("modal_explore_instruction")
+                    ),
+                    div(style = "", icon("arrow-alt-circle-down", style = "font-size:27px; text-align: center; padding: 30px 0em 0px 0;")),
+                    div(style = "", p("Select from the options or enter keywords", style = "font-size:24px; text-align: center; padding: 0px 0em 00px 0;")),
                   ),
+                  
+                  
                   ### search engine ====
                   fluidRow(
                     column(1),
@@ -335,34 +336,31 @@ ui <- tagList(
                     column(1)
                   ),
                   
+                  
                   ### advanced filter ====
                   fluidRow(
                     column(3),
                     column(6,
                            align = "center",
-                           box(
-                             title = "Advanced filter", solidHeader = T, status = "warning", width = NULL, collapsible = F, collapsed = T,
-                             dateRangeInput("year", "Publication period",
-                                            startview = "decade",
-                                            start = "1970-01-01", end = "2021-12-01",
-                                            min = "1970-01-01", max = "2030-01-01",
-                                            format = "yyyy", separator = " - "
-                             ),
-                             selectizeInput("article_id", "Article id", choices = unique(reviewtable$Article_ID), multiple = T, options = list(create = TRUE)),
-                             selectizeInput("article_task", "Task entry", choices = unique(reviewtable$Entry_ID), multiple = T)
-                           )
+                           dateRangeInput("year", "Publication period",
+                                          startview = "decade",
+                                          start = "1970-01-01", end = "2021-12-01",
+                                          min = "1970-01-01", max = "2030-01-01",
+                                          format = "yyyy", separator = " - "
+                           ),
+                           selectizeInput("article_id", "Article id", choices = unique(reviewtable$Article_ID), multiple = T, options = list(create = TRUE))
                     ),
                     column(3)
                   ),
-                  hr(),
                   
                   ### data ====
                   fluidRow(
-                    box(
-                      title = NULL, solidHeader = TRUE, status = "warning", width = NULL,
-                      p(strong("Search result", style = "color: #006c66; font-size: 18px")),
-                      dataTableOutput("table")%>% withSpinner(type=4,color="#006c66")
-                    )
+                    align = "center",
+                    div(style = "", icon("arrow-alt-circle-down", style = "font-size:27px; text-align: center; padding: 30px 0em 0px 0;")),
+                    div(style = "", p("Click on the task entries of interest", style = "font-size:24px; text-align: center; padding: 0px 0em 00px 0;")),
+                    # p(strong("Search result", style = "color: #006c66; font-size: 18px")),
+                    dataTableOutput("table"),
+                    verbatimTextOutput('selected')
                   )
                 )
               ),
@@ -375,20 +373,20 @@ ui <- tagList(
                   title = NULL,
                   solidHeader = T, status = "warning", width = NULL,
                   bs_modal(
-                    id = "modal_HEB_instruction", 
+                    id = "modal_HEB_instruction",
                     title = "Three modes of visualization",
                     body = includeHTML("HEB_instruction.html")
                   ),
                   div(
-                    div(style="display: inline-block; ", strong("Hierarchical Edge Bundling", style = "color: #006c66; font-size: 27px")),
-                    div(style="display: inline-block; padding: 1px 0em 0em 0; ", 
-                        icon('info-sign', lib = "glyphicon") %>%
-                          bs_attach_modal("modal_HEB_instruction")
+                    div(style = "display: inline-block; ", strong("Hierarchical Edge Bundling", style = "color: #006c66; font-size: 27px")),
+                    div(
+                      style = "display: inline-block; padding: 1px 0em 0em 0; ",
+                      icon("info-sign", lib = "glyphicon") %>%
+                        bs_attach_modal("modal_HEB_instruction")
                     )
                   ),
                   p("Hierarchical edge bundling plots that visualize the combination of methodological variables for task entries.", style = "font-size: 18px;"),
                   p(""),
-                  
                   fluidRow(
                     column(8,
                            align = "left",
@@ -399,28 +397,17 @@ ui <- tagList(
                            )
                     ),
                     column(4,
-                           align = "right",
-                           downloadButton("download", label = "Download data", style = "color: #000000; background-color: #ffffff; border-color: #ffffff")
+                           align = "right" # ,
+                           # downloadButton("download", label = "Download data", style = "color: #000000; background-color: #ffffff; border-color: #ffffff")
                     )
                   ),
-                  
                   column(12,
                          align = "center",
                          textOutput("HEBlegend"),
-                         plotOutput("illustration_HEB", height = "650px", width = "700px") %>% withSpinner(type = 4, color = "#006c66")
+                         plotOutput("illustration_HEB", height = "812px", width = "875px") %>% withSpinner(type = 4, color = "#006c66")
                   )
                 )
-              )#,
-              
-              ### Delay ====
-              # fluidRow(
-              #   box(
-              #     title = NULL, solidHeader = T, status = "warning", width = NULL,
-              #     p(strong("Delay", style = "color: #006c66; font-size: 27px")),
-              #     p("Delay periods ranging from 0 to 6 years across the five task types across all task entries.", style = "font-size: 18px;"),
-              #     plotlyOutput("illustration_Delay") %>% withSpinner(type = 4, color = "#006c66")
-              #   )
-              # )
+              )
             )
           )
         ),
@@ -437,118 +424,7 @@ ui <- tagList(
 # server ----
 server <- function(input, output, session) {
   
-  # Preprocess outputs----
-  # Make reactive to store filter criteria
   
-  # authors input
-  input.authors <- reactive({
-    paste(input$authors, collapse = "|")
-  })
-  # title input
-  input.title <- reactive({
-    input$title %>% str_replace_all('[^[:alnum:]]','') %>% tolower() %>% paste(collapse = "|")
-  })
-  # year input
-  year_start <- reactive({
-    format(as.Date(input$year[1]), "%Y") %>% as.numeric()
-  })
-  year_end <- reactive({
-    format(as.Date(input$year[2]), "%Y") %>% as.numeric()
-  })
-  # Update df by authors
-  reviewtable.update.authors <- reactive({
-    reviewtable %>%
-      filter(
-        Year >= year_start() & Year <= year_end(),
-        str_detect(Authors, input.authors()),
-        str_detect(Title%>% str_replace_all('[^[:alnum:]]','') %>% tolower(), input.title() #case-insensitive
-        )
-      )
-  })
-  # Update article_id input
-  observe({
-    updateSelectizeInput(session, "article_id", "Article id", choices = unique(reviewtable.update.authors()$Article_ID))
-  })
-  
-  
-  # article_id input
-  input.article_id <- reactive({
-    paste(input$article_id, collapse = "|")
-  })
-  # Update df by authors, year, article_id
-  reviewtable.update.authors.year.article_id <- reactive({
-    reviewtable.update.authors() %>% filter(str_detect(Article_ID, input.article_id()))
-  })
-  # Update article_task input
-  observe({
-    updateSelectizeInput(session, "article_task", "Task entry", choices = unique(reviewtable.update.authors.year.article_id()$Entry_ID))
-  })
-  
-  
-  # article_task input
-  input.article_task <- reactive({
-    paste(input$article_task, collapse = "|")
-  })
-  # Update df by authors, year, article_id, article_task
-  reviewtable.filtered <- reactive({
-    reviewtable.update.authors.year.article_id() %>%
-      filter(str_detect(Entry_ID, input.article_task()))
-  })
-  
-  # Make binary df
-  df.filtered <- reactive({
-    df %>%
-      filter(str_detect(Entry_ID, reviewtable.filtered()$Entry_ID %>% paste(collapse = "|")))
-  })
-  
-  # Make delay dataframe
-  delay1.filtered <- reactive({
-    delay1 %>%
-      filter(str_detect(Entry_ID, input.article_task()))
-  })
-  
-  # Top similarity data frame
-  topSimilarity.filtered <- reactive({
-    input.entryid <- reviewtable.filtered()$Entry_ID %>% paste(collapse = "|")
-    
-    topSimilarity %>%
-      filter(str_detect(Entry1, input.entryid) | str_detect(Entry2, input.entryid)) %>%
-      arrange(desc(Similarity)) %>%
-      select(Entry1, Entry2, Similarity)
-  })
-  
-  # citation df
-  citation.filtered <- reactive({
-    input.articleid <- reviewtable.filtered()$Article_ID %>% paste(collapse = "|")
-    
-    citation %>%
-      filter(str_detect(Article_ID, input.articleid))
-  })
-  
-  
-  ### Make connection
-  # Data frame for edges (connection):
-  # get connections
-  connect <- reactive({
-    PN_GetConnection(data = df.filtered(), identifier_var = identifier_var)
-  })
-  # look for overlapping edges
-  connect_OverlapOrUnique <- reactive({
-    connect_OverlapOrUnique <- PN_GetConnection_OverlapOrUniqueLabel(connect())
-    connect_OverlapOrUnique$Proportion <- as.numeric(connect_OverlapOrUnique$Proportion)
-    connect_OverlapOrUnique$Entry_ID <- as.factor(connect_OverlapOrUnique$Entry_ID)
-    
-    return(connect_OverlapOrUnique)
-  })
-  
-  
-  # Render filtered data table
-  output$table <- renderDataTable(
-    {
-      reviewtable.filtered() %>% select(Article_ID, Authors, Title, Year, Task_number, Task_description_)
-    },
-    options = list(pageLength = 5, scrollX = "250px", autoWidth = TRUE, dom = 'tp')
-  )
   
   # OVERVIEW ----
   ## Article over year ----
@@ -626,8 +502,10 @@ server <- function(input, output, session) {
         trans = "log", breaks = c(1, 5, 10, 40, max(symbol_pos$n.Article))
       ) +
       scale_size_continuous(name = "Number of Entries", range = c(2, 18), breaks = c(1, 5, 10, 40, max(symbol_pos$n.Article))) +
-      guides(color = "none", fill = "none",
-             size = "none")
+      guides(
+        color = "none", fill = "none",
+        size = "none"
+      )
     
     return(ggplotly(pWM, tooltip = "text") %>%
              layout(
@@ -674,60 +552,156 @@ server <- function(input, output, session) {
       )
   })
   
+  ## DELAY ----
+  ### Display output
+  
+  # Plot
+  output$illustration_Delay <- renderPlotly({
+    delay1 <- PN_DelayDf_Stack(
+      data = delay1 %>% select(Entry_ID, starts_with("Delay_"), starts_with("Task_type")),
+      split.interval = " - "
+    )
+    nTasktype <- delay1$Task_type %>%
+      unique() %>%
+      length()
+    
+    pDelay <- ggplot(data = delay1) +
+      geom_segment(aes(x = X.a, xend = X.b, y = Y, yend = Y, group = ID_Delay, color = Task_type)) +
+      geom_point(aes(x = X.a, y = Y, group = ID_Delay, color = Task_type, text = text)) +
+      geom_point(aes(x = X.b, y = Y, group = ID_Delay, color = Task_type, text = text)) +
+      geom_line(aes(x = X.a, y = Y, group = Entry_ID, color = Task_type), linetype = "dotted") +
+      scale_x_continuous(breaks = c(0, 525600, 1051200, 2102400, 3153600), labels = c("0", "1y", "2y", "4y", "6y"), minor_breaks = seq(0, 1440, by = 1), limits = c(0, 3153600)) +
+      ylim(-1, 3153600) +
+      scale_color_manual(values = TaskTypelevelPalette[1:nTasktype], name = "Task type") +
+      scale_fill_manual(values = TaskTypelevelPalette[1:nTasktype], name = "Task type") +
+      labs(x = "Delay", y = "Task entry") +
+      # guides(fill = guide_legend(override.aes = list(alpha=1,size=8)))+
+      theme(
+        axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.title.y = element_blank(),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
+        axis.line.x = element_line(colour = "black")
+      )
+    
+    return(hide_guides(ggplotly(pDelay, tooltip = c("text"))))
+  })
+  
   
   # EXPLORE ----
   
-  ## HEB ----
+  ## Preprocess outputs----
+  # Make reactive to store filter criteria
+  # authors input
+  input.authors <- reactive({
+    paste(input$authors, collapse = "|")
+  })
+  # title input
+  input.title <- reactive({
+    input$title %>%
+      str_replace_all("[^[:alnum:]]", "") %>%
+      tolower() %>%
+      paste(collapse = "|") # case-insensitive
+  })
+  # year input
+  year_start <- reactive({
+    format(as.Date(input$year[1]), "%Y") %>% as.numeric()
+  })
+  year_end <- reactive({
+    format(as.Date(input$year[2]), "%Y") %>% as.numeric()
+  })
+  # article_id input
+  input.article_id <- reactive({
+    paste(input$article_id, collapse = "|")
+  })
   
-  # download csv
-  # filename <- reactive({
-  #   if (input$HEB_type == "trend") {
-  #     "trend-"
-  #   } else
-  #   if (input$HEB_type == "contrast") {
-  #     "data-"
-  #   } else
-  #   if (input$HEB_type == "similarity") {
-  #     "most-similar-entries-"
-  #   }
-  # })
-  # content <- reactive({
-  #   if (input$HEB_type == "trend") {
-  #     citation.filtered() %>% pull(APAref)
-  #   } else
-  #   if (input$HEB_type == "contrast") {
-  #     connect_OverlapOrUnique()
-  #   } else
-  #   if (input$HEB_type == "similarity") {
-  #     topSimilarity.filtered() %>% head(5)
-  #   }
-  # })
-  # output$download <- downloadHandler(
-  #   filename = function() {
-  #     # paste(filename(), Sys.Date(), ".csv", sep="")
-  # 
-  #     if (input$HEB_type == "trend") {
-  #       paste(filename(), Sys.Date(), ".pdf", sep = "")
-  #     } else
-  #     if (input$HEB_type == "contrast") {
-  #       paste(filename(), Sys.Date(), ".pdf", sep = "")
-  #     } else
-  #     if (input$HEB_type == "similarity") {
-  #       paste(filename(), Sys.Date(), ".pdf", sep = "")
-  #     }
-  #   },
-  #   content = function(file) {
-  #     if (input$HEB_type == "trend") {
-  #       writeLines(content(), file)
-  #     } else
-  #     if (input$HEB_type == "contrast") {
-  #       write.csv(content(), file, row.names = F)
-  #     } else
-  #     if (input$HEB_type == "similarity") {
-  #       write.csv(content(), file, row.names = F)
-  #     }
-  #   }
-  # )
+  # Update df by authors OR title + by year
+  reviewtable.update.authorsORtitle.year <- reactive({
+    if (length(input$authors) > 0 & length(input$title) > 0) {
+      reviewtable %>% filter(str_detect(Authors, input.authors()) | str_detect(Title %>% str_replace_all("[^[:alnum:]]", "") %>% tolower(), input.title()))
+    } else
+      if (length(input$authors) > 0 & length(input$title) == 0) {
+        reviewtable %>% filter(str_detect(Authors, input.authors()))
+      } else
+        if (length(input$authors) == 0 & length(input$title) > 0) {
+          reviewtable %>% filter(str_detect(Title %>% str_replace_all("[^[:alnum:]]", "") %>% tolower(), input.title()))
+        } else
+          if (length(input$authors) == 0 & length(input$title) == 0) {
+            reviewtable[0, ]
+          }
+  })
+  
+  # Update article_id input
+  observe({
+    updateSelectizeInput(session, "article_id", "Article id", choices = unique(reviewtable.update.authorsORtitle.year()$Article_ID))
+  })
+  
+  # Update df by authors OR title + by year + by article_id
+  reviewtable.update.authorsORtitle.year.article_id <- reactive({
+    reviewtable.update.authorsORtitle.year() %>% filter(str_detect(Article_ID, input.article_id()))
+  })
+  
+  # Show data table
+  # Render filtered data table
+  output$table <- renderDataTable(
+    {
+      reviewtable.update.authorsORtitle.year.article_id() %>% select(Article_ID, Authors, Title, Year, Task_number, Task_description_) %>% rename(Task_description=Task_description_)
+    },
+    options = list(pageLength = 3, scrollX = "250px", autoWidth = TRUE, dom = "tp", 
+                   language = list(zeroRecords = "No search criteria detected - Use the filter to extract task entries") )
+  )
+  
+  selectedEntry_ID <- eventReactive(input$table_rows_selected, {
+    table_row_selected <- input$table_rows_selected
+    reviewtable.update.authorsORtitle.year.article_id()$Entry_ID[table_row_selected] %>%
+      paste(collapse = "|") %>%
+      print()
+  })
+  
+  output$selected = renderPrint({
+    table_row_selected <- input$table_rows_selected
+    entries_selected <- reviewtable.update.authorsORtitle.year.article_id()$Entry_ID[table_row_selected]
+    if (length(table_row_selected)) {
+      cat('These task entries were selected:\n\n')
+      cat(entries_selected, sep = '\n')
+    }
+  })
+  
+  reviewtable.filtered <- reactive({
+    reviewtable %>% filter(str_detect(Entry_ID, selectedEntry_ID()))
+  })
+  df.filtered <- reactive({
+    df %>% filter(str_detect(Entry_ID, selectedEntry_ID()))
+  })
+  topSimilarity.filtered <- reactive({
+    topSimilarity %>%
+      filter(str_detect(Entry1, selectedEntry_ID()) | str_detect(Entry2, selectedEntry_ID())) %>%
+      arrange(desc(Similarity)) %>%
+      select(Entry1, Entry2, Similarity)
+  })
+  citation.filtered <- reactive({
+    citation %>% filter(str_detect(Entry_ID, selectedEntry_ID()))
+  })
+  
+  
+  
+  
+  ### Make connection
+  # Data frame for edges (connection):
+  # get connections
+  connect <- reactive({
+    PN_GetConnection(data = df.filtered(), identifier_var = identifier_var)
+  })
+  # look for overlapping edges
+  connect_OverlapOrUnique <- reactive({
+    connect_OverlapOrUnique <- PN_GetConnection_OverlapOrUniqueLabel(connect())
+    connect_OverlapOrUnique$Proportion <- as.numeric(connect_OverlapOrUnique$Proportion)
+    connect_OverlapOrUnique$Entry_ID <- as.factor(connect_OverlapOrUnique$Entry_ID)
+    
+    return(connect_OverlapOrUnique)
+  })
+  
+  
+  
+  ## HEB ----
   
   
   ## Display plots
@@ -754,7 +728,7 @@ server <- function(input, output, session) {
   
   
   output$illustration_HEB <- renderPlot({
-    
+    req(selectedEntry_ID())
     if (input$HEB_type == "contrast") {
       if (nrow(df.filtered()) > 2) {
         showNotification("Cannot show more than two entries individually. Use the filter to reduce task entries.", type = "error")
@@ -849,41 +823,6 @@ server <- function(input, output, session) {
       
       return(p_group)
     }
-  })
-  
-  
-  ## DELAY ----
-  ### Display output
-  
-  # Plot
-  output$illustration_Delay <- renderPlotly({
-    
-    delay1 <- PN_DelayDf_Stack(
-      data = delay1.filtered() %>% select(Entry_ID, starts_with("Delay_"), starts_with("Task_type")),
-      split.interval = " - "
-    )
-    nTasktype <- delay1$Task_type %>%
-      unique() %>%
-      length()
-    
-    pDelay <- ggplot(data = delay1) +
-      geom_segment(aes(x = X.a, xend = X.b, y = Y, yend = Y, group = ID_Delay, color = Task_type)) +
-      geom_point(aes(x = X.a, y = Y, group = ID_Delay, color = Task_type, text = text)) +
-      geom_point(aes(x = X.b, y = Y, group = ID_Delay, color = Task_type, text = text)) +
-      geom_line(aes(x = X.a, y = Y, group = Entry_ID, color = Task_type), linetype = "dotted") +
-      scale_x_continuous(breaks = c(0, 525600, 1051200, 2102400, 3153600), labels = c("0", "1y", "2y", "4y", "6y"), minor_breaks = seq(0, 1440, by = 1), limits = c(0, 3153600)) +
-      ylim(-1, 3153600) +
-      scale_color_manual(values = TaskTypelevelPalette[1:nTasktype], name = "Task type") +
-      scale_fill_manual(values = TaskTypelevelPalette[1:nTasktype], name = "Task type") +
-      labs(x = "Delay", y = "Task entry") +
-      # guides(fill = guide_legend(override.aes = list(alpha=1,size=8)))+
-      theme(
-        axis.text.y = element_blank(), axis.ticks.y = element_blank(), axis.title.y = element_blank(),
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
-        axis.line.x = element_line(colour = "black")
-      )
-    
-    return(hide_guides(ggplotly(pDelay, tooltip = c("text"))))
   })
 }
 
