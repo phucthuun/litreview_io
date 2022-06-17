@@ -11,15 +11,15 @@ rm(list = ls())
   library(shinycssloaders)
   library(htmltools)
   library(bsplus)
-
-
+  
+  
   library(stringr)
   library(dplyr)
   library(tidyverse)
   library(tidyr)
   library(reshape2)
   library(readxl)
-
+  
   library(ggraph)
   library(igraph)
   library(RColorBrewer)
@@ -27,7 +27,7 @@ rm(list = ls())
   library(scales)
   library(viridis)
   library(cowplot)
-
+  
   library(giscoR)
   library(sf)
 }
@@ -35,33 +35,33 @@ rm(list = ls())
 { # retrieve configuration functions
   source("PN_int_breaks.R", local = TRUE) # get palette
   source("PN_DelayDf_Stack.R", local = TRUE) # transform delay df
-
+  
   source("PN_GetPalette.R", local = TRUE) # get palette
   source("PN_GetConnection.R", local = TRUE) # get connections (=edges)
   source("PN_GetConnection_OverlapOrUniqueLabel.R", local = TRUE) # get connections and label them with unique article_id or "overlap"
-
+  
   source("PN_MakePie.R", local = TRUE) # plot pie chart
   source("PN_MakePiePlotly.R", local = TRUE) # plot pie chart
   source("PN_PlotNode.R", local = TRUE) # plot nodes only (>> we have one fixed frame)
   source("PN_PlotEdge_Filter.R", local = TRUE) # plot edges and color code them by unique article_id or "overlap" label
   source("PN_PlotEdge_Group.R", local = TRUE) # plot edges and color code them by the number of entries
-
+  
   source("PN_CountLocation.R", local = TRUE)
 }
 
 
 { # retrieve data
-
+  
   # for World Map
   # Read data set
-  reviewtable <- read_excel("./data/Lit_Review_Preprocessed.xlsx") %>%
+  reviewtable <- read_excel("Lit_Review_Preprocessed.xlsx") %>%
     mutate(
       Article_ID = str_extract_all(Entry_ID, "\\w+(?=,)"),
       Task_number = str_extract_all(Entry_ID, "(?<=,\\s)\\w+"), .before = Entry_ID
     )
   
   # for Delay
-  delay1 <- read_excel("Lit_Review_QC.xlsx") %>%
+  delay1 <- read_excel("Lit_Review_rawdata.xlsx") %>%
     select(
       Article_ID, Task_number,
       starts_with("Delay_"),
@@ -71,7 +71,7 @@ rm(list = ls())
     select(-c(Task_number, Article_ID)) %>%
     # remove entries without information about delay
     filter(Delay_1 > 0)
-
+  
   # for HEB
   identifier_var <- c("Article_ID", "Task_number", "Entry_ID", "Authors", "Title", "Year")
   df <- read_excel("Lit_Review_binarized.xlsx") %>%
@@ -81,27 +81,27 @@ rm(list = ls())
     )
   # for HEB: reverse filtering, top similar entries
   topSimilarity <- read_excel("TopSimPair.xlsx")
-
+  
   # get hierarchy
   hierarchy <- read_excel("Hierarchy.xlsx")
-
+  
   # get vertices
   vertices <- read_excel("Vertices.xlsx")
   vertices$group <- factor(vertices$group, levels = unique(vertices$group))
-
+  
   # for WM
   # Get countries
   epsg_code <- 4088
   world <- gisco_get_countries() %>%
     st_transform(epsg_code)
   world <- sf::st_cast(world, "MULTIPOLYGON")
-
+  
   # for citation
   citation <- read_excel("citation.xlsx")
 }
 # ui ----
 ui <- tagList(
-
+  
   ## style ----
   tags$head(
     tags$style(
@@ -169,8 +169,8 @@ ui <- tagList(
     .navbar-right {float: right !important;}
     body {background:#fff; padding-top: 90px;}
                         "),
-
-
+    
+    
     ## HOME ----
     tabPanel(
       div(p("HOME"), style = "font-size: 20px"),
@@ -190,8 +190,8 @@ ui <- tagList(
         column(2)
       )
     ),
-
-
+    
+    
     ## METHODS ----
     tabPanel(
       div(p("METHODS"), style = "font-size: 20px"),
@@ -211,7 +211,7 @@ ui <- tagList(
         column(2)
       )
     ),
-
+    
     ## OVERVIEW ----
     tabPanel(
       div(p("OVERVIEW"), style = "font-size: 20px"),
@@ -226,43 +226,57 @@ ui <- tagList(
                        p(strong("Publications over year", style = "color: #006c66; font-size: 27px")),
                        p("A timeline plot depicting the number of publications across years.", style = "font-size: 18px;"),
                        plotlyOutput("illustration_year")%>% withSpinner(type=4,color="#006c66"))),
-
+          
           fluidRow(box(solidHeader = T, status = "warning", width = NULL,
                        p(strong("Locations of data collection", style = "color: #006c66; font-size: 27px")),
                        p("A heatmap of the data collection locations from the selected publications.
                   Color intensity indicates the number of entries.", style = "font-size: 18px;"),
                        plotlyOutput("illustration_WM")%>% withSpinner(type=4,color="#006c66"))),
-
+          
           
           fluidRow(box(
             solidHeader = T, status = "warning", width = NULL,
             p(strong("Overall literature composition", style = "color: #006c66; font-size: 27px")),
             p("Pie charts depicting the relative composition of the experimental design, task type,
                                                  and to-be-remembered information method factors from memory development literature.", style = "font-size: 18px;"),
-            fluidRow(
-              column(
-                4,
-                p(strong("Design"), align = "center"),
-                plotlyOutput("illustration_pie.design") %>% withSpinner(type = 4, color = "#006c66")
-              ),
-              column(
-                4,
-                p(strong("Task type"), align = "center"),
-                plotlyOutput("illustration_pie.tasktype") %>% withSpinner(type = 4, color = "#006c66")
-              ),
-              column(
-                4,
-                p(strong("To-be-remembered information"), align = "center"),
-                plotlyOutput("illustration_pie.tbrinfo") %>% withSpinner(type = 4, color = "#006c66")
-              )
+            fluidRow(align="center",
+                     column(
+                       4,
+                       p(strong("Design"), align = "center"),
+                       div(plotlyOutput("illustration_pie.design") %>% withSpinner(type = 4, color = "#006c66"),align="center")
+                     ),
+                     column(
+                       4,
+                       p(strong("Task type"), align = "center"),
+                       div(plotlyOutput("illustration_pie.tasktype") %>% withSpinner(type = 4, color = "#006c66"),align="center")
+                     ),
+                     column(
+                       4,
+                       p(strong("To-be-remembered information"), align = "center"),
+                       div(plotlyOutput("illustration_pie.tbrinfo") %>% withSpinner(type = 4, color = "#006c66"),align="center")
+                     ),
             )
-          ))
+          )),
+          
+          
+          fluidRow(
+            box(
+              title = NULL, solidHeader = T, status = "warning", width = NULL,
+              p(strong("Delay", style = "color: #006c66; font-size: 27px")),
+              p("Delay periods ranging from 0 to 6 years across the five task types across all task entries.", style = "font-size: 18px;"),
+              plotlyOutput("illustration_Delay") %>% withSpinner(type = 4, color = "#006c66")
+            )
+          )
+          
+          
+          
+          
         ),
         column(2)
       )
     ),
-
-
+    
+    
     ## EXPLORE ----
     tabPanel(
       div(p("EXPLORE"), style = "font-size: 20px"),
@@ -292,16 +306,16 @@ ui <- tagList(
                     body = includeHTML("explore_instruction.html")
                   ),
                   div(style="text-align:center; padding: 60px 0px 0px 0px;",
-                    div(style="display: inline-block; font-size:44px; text-align: center;", 
-                        strong("Explore the ",style="color:#000000"),
-                        strong("task entries ",style="color:#006c66"),
-                        strong("of interest",style="color:#000000")),
-                    div(style="display: inline-block; padding: 1px 0em 0em 0; ", 
-                        icon('info-sign', lib = "glyphicon") %>%
-                          bs_attach_modal("modal_explore_instruction")
-                    ),
-                    div(style="", p("Select from the options or enter keywords", style="font-size:18px; text-align: center; padding: 0px 0em 15px 0;")),
-                    
+                      div(style="display: inline-block; font-size:44px; text-align: center;", 
+                          strong("Explore the ",style="color:#000000"),
+                          strong("task entries ",style="color:#006c66"),
+                          strong("of interest",style="color:#000000")),
+                      div(style="display: inline-block; padding: 1px 0em 0em 0; ", 
+                          icon('info-sign', lib = "glyphicon") %>%
+                            bs_attach_modal("modal_explore_instruction")
+                      ),
+                      div(style="", p("Select from the options or enter keywords", style="font-size:18px; text-align: center; padding: 0px 0em 15px 0;")),
+                      
                   ),
                   ### search engine ====
                   fluidRow(
@@ -309,9 +323,9 @@ ui <- tagList(
                     column(
                       width = 5, align = "center",
                       selectizeInput("authors",
-                        label = "Author",
-                        choices = reviewtable$Authors %>% unlist() %>% str_extract_all("\\w+") %>% unlist() %>% unique() %>% sort(),
-                        multiple = T, options = list(create = TRUE)
+                                     label = "Author",
+                                     choices = reviewtable$Authors %>% unlist() %>% str_extract_all("\\w+") %>% unlist() %>% unique() %>% sort(),
+                                     multiple = T, options = list(create = TRUE)
                       )
                     ),
                     column(
@@ -320,28 +334,28 @@ ui <- tagList(
                     ),
                     column(1)
                   ),
-
+                  
                   ### advanced filter ====
                   fluidRow(
                     column(3),
                     column(6,
-                      align = "center",
-                      box(
-                        title = "Advanced filter", solidHeader = T, status = "warning", width = NULL, collapsible = T, collapsed = T,
-                        dateRangeInput("year", "Publication period",
-                          startview = "decade",
-                          start = "1970-01-01", end = NULL,
-                          min = "1970-01-01", max = "2030-01-01",
-                          format = "yyyy", separator = " - "
-                        ),
-                        selectizeInput("article_id", "Article id", choices = unique(reviewtable$Article_ID), multiple = T, options = list(create = TRUE)),
-                        selectizeInput("article_task", "Task entry", choices = unique(reviewtable$Entry_ID), multiple = T)
-                      )
+                           align = "center",
+                           box(
+                             title = "Advanced filter", solidHeader = T, status = "warning", width = NULL, collapsible = F, collapsed = T,
+                             dateRangeInput("year", "Publication period",
+                                            startview = "decade",
+                                            start = "1970-01-01", end = "2021-12-01",
+                                            min = "1970-01-01", max = "2030-01-01",
+                                            format = "yyyy", separator = " - "
+                             ),
+                             selectizeInput("article_id", "Article id", choices = unique(reviewtable$Article_ID), multiple = T, options = list(create = TRUE)),
+                             selectizeInput("article_task", "Task entry", choices = unique(reviewtable$Entry_ID), multiple = T)
+                           )
                     ),
                     column(3)
                   ),
                   hr(),
-
+                  
                   ### data ====
                   fluidRow(
                     box(
@@ -352,8 +366,8 @@ ui <- tagList(
                   )
                 )
               ),
-
-
+              
+              
               ### HEB ====
               fluidRow(
                 box(
@@ -370,50 +384,50 @@ ui <- tagList(
                     div(style="display: inline-block; padding: 1px 0em 0em 0; ", 
                         icon('info-sign', lib = "glyphicon") %>%
                           bs_attach_modal("modal_HEB_instruction")
-                        )
+                    )
                   ),
                   p("Hierarchical edge bundling plots that visualize the combination of methodological variables for task entries.", style = "font-size: 18px;"),
                   p(""),
                   
                   fluidRow(
                     column(8,
-                      align = "left",
-                      radioSwitchButtons(
-                        inputId = "HEB_type",
-                        choices = c("Trend" = "trend", "Contrast" = "contrast", "Similarity" = "similarity"),
-                        selected_background = "#006c66", selected_color = "#ffffff", selected = "trend"
-                      )
+                           align = "left",
+                           radioSwitchButtons(
+                             inputId = "HEB_type",
+                             choices = c("Trend" = "trend", "Contrast" = "contrast", "Similarity" = "similarity"),
+                             selected_background = "#006c66", selected_color = "#ffffff", selected = "trend"
+                           )
                     ),
                     column(4,
-                      align = "right",
-                      downloadButton("download", label = "Download data", style = "color: #000000; background-color: #ffffff; border-color: #ffffff")
+                           align = "right",
+                           downloadButton("download", label = "Download data", style = "color: #000000; background-color: #ffffff; border-color: #ffffff")
                     )
                   ),
                   
                   column(12,
-                    align = "center",
-                    textOutput("HEBlegend"),
-                    plotOutput("illustration_HEB", height = "650px", width = "700px") %>% withSpinner(type = 4, color = "#006c66")
+                         align = "center",
+                         textOutput("HEBlegend"),
+                         plotOutput("illustration_HEB", height = "650px", width = "700px") %>% withSpinner(type = 4, color = "#006c66")
                   )
                 )
-              ),
-
+              )#,
+              
               ### Delay ====
-              fluidRow(
-                box(
-                  title = NULL, solidHeader = T, status = "warning", width = NULL,
-                  p(strong("Delay", style = "color: #006c66; font-size: 27px")),
-                  p("Delay periods ranging from 0 to 6 years across the five task types across all task entries.", style = "font-size: 18px;"),
-                  plotlyOutput("illustration_Delay") %>% withSpinner(type = 4, color = "#006c66")
-                )
-              )
+              # fluidRow(
+              #   box(
+              #     title = NULL, solidHeader = T, status = "warning", width = NULL,
+              #     p(strong("Delay", style = "color: #006c66; font-size: 27px")),
+              #     p("Delay periods ranging from 0 to 6 years across the five task types across all task entries.", style = "font-size: 18px;"),
+              #     plotlyOutput("illustration_Delay") %>% withSpinner(type = 4, color = "#006c66")
+              #   )
+              # )
             )
           )
         ),
         column(2)
       )
     )
-
+    
     # ## DATA ----
     # tabPanel('DATA'),
   )
@@ -422,10 +436,10 @@ ui <- tagList(
 
 # server ----
 server <- function(input, output, session) {
-
+  
   # Preprocess outputs----
   # Make reactive to store filter criteria
-
+  
   # authors input
   input.authors <- reactive({
     paste(input$authors, collapse = "|")
@@ -448,15 +462,15 @@ server <- function(input, output, session) {
         Year >= year_start() & Year <= year_end(),
         str_detect(Authors, input.authors()),
         str_detect(Title%>% str_replace_all('[^[:alnum:]]','') %>% tolower(), input.title() #case-insensitive
-                   )
+        )
       )
   })
   # Update article_id input
   observe({
     updateSelectizeInput(session, "article_id", "Article id", choices = unique(reviewtable.update.authors()$Article_ID))
   })
-
-
+  
+  
   # article_id input
   input.article_id <- reactive({
     paste(input$article_id, collapse = "|")
@@ -469,8 +483,8 @@ server <- function(input, output, session) {
   observe({
     updateSelectizeInput(session, "article_task", "Task entry", choices = unique(reviewtable.update.authors.year.article_id()$Entry_ID))
   })
-
-
+  
+  
   # article_task input
   input.article_task <- reactive({
     paste(input$article_task, collapse = "|")
@@ -480,38 +494,38 @@ server <- function(input, output, session) {
     reviewtable.update.authors.year.article_id() %>%
       filter(str_detect(Entry_ID, input.article_task()))
   })
-
+  
   # Make binary df
   df.filtered <- reactive({
     df %>%
       filter(str_detect(Entry_ID, reviewtable.filtered()$Entry_ID %>% paste(collapse = "|")))
   })
-
+  
   # Make delay dataframe
   delay1.filtered <- reactive({
     delay1 %>%
       filter(str_detect(Entry_ID, input.article_task()))
   })
-
+  
   # Top similarity data frame
   topSimilarity.filtered <- reactive({
     input.entryid <- reviewtable.filtered()$Entry_ID %>% paste(collapse = "|")
-
+    
     topSimilarity %>%
       filter(str_detect(Entry1, input.entryid) | str_detect(Entry2, input.entryid)) %>%
       arrange(desc(Similarity)) %>%
       select(Entry1, Entry2, Similarity)
   })
-
+  
   # citation df
   citation.filtered <- reactive({
     input.articleid <- reviewtable.filtered()$Article_ID %>% paste(collapse = "|")
-
+    
     citation %>%
       filter(str_detect(Article_ID, input.articleid))
   })
-
-
+  
+  
   ### Make connection
   # Data frame for edges (connection):
   # get connections
@@ -523,43 +537,43 @@ server <- function(input, output, session) {
     connect_OverlapOrUnique <- PN_GetConnection_OverlapOrUniqueLabel(connect())
     connect_OverlapOrUnique$Proportion <- as.numeric(connect_OverlapOrUnique$Proportion)
     connect_OverlapOrUnique$Entry_ID <- as.factor(connect_OverlapOrUnique$Entry_ID)
-
+    
     return(connect_OverlapOrUnique)
   })
-
-
+  
+  
   # Render filtered data table
   output$table <- renderDataTable(
     {
-      reviewtable.filtered() %>% select(Article_ID, Authors, Title, Year, Task_number)
+      reviewtable.filtered() %>% select(Article_ID, Authors, Title, Year, Task_number, Task_description_)
     },
     options = list(pageLength = 5, scrollX = "250px", autoWidth = TRUE, dom = 'tp')
   )
-
+  
   # OVERVIEW ----
   ## Article over year ----
   output$illustration_year <- renderPlotly({
     ggplotly(reviewtable %>%
-      distinct(Article_ID, Year) %>%
-      group_by(Year) %>%
-      summarise(`No. of Published Article` = n()) %>%
-      arrange(Year) %>%
-      ggplot() +
-      geom_line(aes(x = Year, y = `No. of Published Article`), color = "#006c66") +
-      geom_point(aes(x = Year, y = `No. of Published Article`), color = "#006c66") +
-      scale_y_continuous(breaks = function(x) PN_int_breaks(x, n = 10)) +
-      scale_x_continuous(breaks = function(x) PN_int_breaks(x, n = 10)) +
-      theme(
-        panel.background = element_rect(fill = "transparent"), # bg of the panel
-        plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-        axis.title = element_text(color = "#006c66"), axis.text = element_text(color = "#006c66"), axis.ticks = element_blank()
-      ))
+               distinct(Article_ID, Year) %>%
+               group_by(Year) %>%
+               summarise(`No. of Published Article` = n()) %>%
+               arrange(Year) %>%
+               ggplot() +
+               geom_line(aes(x = Year, y = `No. of Published Article`), color = "#006c66") +
+               geom_point(aes(x = Year, y = `No. of Published Article`), color = "#006c66") +
+               scale_y_continuous(breaks = function(x) PN_int_breaks(x, n = 10)) +
+               scale_x_continuous(breaks = function(x) PN_int_breaks(x, n = 10)) +
+               theme(
+                 panel.background = element_rect(fill = "transparent"), # bg of the panel
+                 plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+                 panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                 axis.title = element_text(color = "#006c66"), axis.text = element_text(color = "#006c66"), axis.ticks = element_blank()
+               ))
   })
-
-
-
-
+  
+  
+  
+  
   ## WORLD MAP ----
   ### Make df for locations
   output$illustration_WM <- renderPlotly({
@@ -581,17 +595,17 @@ server <- function(input, output, session) {
         sovereignt != "United States of America" ~ sovereignt
       )) %>%
       rename("NAME_ENGL" = "sovereignt")
-
+    
     worlddf <- left_join(world, df.location, by = "NAME_ENGL")
     worlddf$Article[!is.na(worlddf$Article)] <- 1
     worlddf$Article[is.na(worlddf$Article)] <- 0
     worlddf$Article <- as.factor(worlddf$Article)
-
-
+    
+    
     # Countries centroids
     symbol_pos <- st_centroid(world, of_largest_polygon = TRUE)
     symbol_pos <- merge(symbol_pos, df.location, by = "NAME_ENGL") %>% arrange(n.Article)
-
+    
     pWM <- ggplot() +
       geom_sf(data = worlddf %>% filter(Article == 1), fill = "#87E1D4", color = "#D6E6E2") +
       geom_sf(data = worlddf %>% filter(Article == 0), fill = "#D6E6E2", color = "#D6E6E2") +
@@ -612,17 +626,18 @@ server <- function(input, output, session) {
         trans = "log", breaks = c(1, 5, 10, 40, max(symbol_pos$n.Article))
       ) +
       scale_size_continuous(name = "Number of Entries", range = c(2, 18), breaks = c(1, 5, 10, 40, max(symbol_pos$n.Article))) +
-      guides(size = "none", color = "none", fill = "none")
-
+      guides(color = "none", fill = "none",
+             size = "none")
+    
     return(ggplotly(pWM, tooltip = "text") %>%
-      layout(
-        xaxis = list(autorange = T),
-        yaxis = list(autorange = T)
-      ))
+             layout(
+               xaxis = list(autorange = T),
+               yaxis = list(autorange = T)
+             ))
   })
-
+  
   ## PIE ----
-
+  
   output$illustration_pie.design <- renderPlotly({
     p <- PN_MakePiePlotly(reviewtable, "Design")
     p <- p %>%
@@ -634,7 +649,7 @@ server <- function(input, output, session) {
         font = list(size = 20)
       )
   })
-
+  
   output$illustration_pie.tasktype <- renderPlotly({
     p <- PN_MakePiePlotly(reviewtable, "Task_type")
     p <- p %>%
@@ -646,7 +661,7 @@ server <- function(input, output, session) {
         font = list(size = 20)
       )
   })
-
+  
   output$illustration_pie.tbrinfo <- renderPlotly({
     p <- PN_MakePiePlotly(reviewtable, "To_be_remembered_information")
     p <- p %>%
@@ -658,63 +673,63 @@ server <- function(input, output, session) {
         font = list(size = 17)
       )
   })
-
-
+  
+  
   # EXPLORE ----
-
+  
   ## HEB ----
-
+  
   # download csv
-  filename <- reactive({
-    if (input$HEB_type == "trend") {
-      "data-"
-    } else
-    if (input$HEB_type == "contrast") {
-      "data-"
-    } else
-    if (input$HEB_type == "similarity") {
-      "most-similar-entries-"
-    }
-  })
-  content <- reactive({
-    if (input$HEB_type == "trend") {
-      citation.filtered() %>% pull(APAref)
-    } else
-    if (input$HEB_type == "contrast") {
-      connect_OverlapOrUnique()
-    } else
-    if (input$HEB_type == "similarity") {
-      topSimilarity.filtered() %>% head(5)
-    }
-  })
-  output$download <- downloadHandler(
-    filename = function() {
-      # paste(filename(), Sys.Date(), ".csv", sep="")
-
-      if (input$HEB_type == "trend") {
-        paste(filename(), Sys.Date(), ".txt", sep = "")
-      } else
-      if (input$HEB_type == "contrast") {
-        paste(filename(), Sys.Date(), ".csv", sep = "")
-      } else
-      if (input$HEB_type == "similarity") {
-        paste(filename(), Sys.Date(), ".csv", sep = "")
-      }
-    },
-    content = function(file) {
-      if (input$HEB_type == "trend") {
-        writeLines(content(), file)
-      } else
-      if (input$HEB_type == "contrast") {
-        write.csv(content(), file, row.names = F)
-      } else
-      if (input$HEB_type == "similarity") {
-        write.csv(content(), file, row.names = F)
-      }
-    }
-  )
-
-
+  # filename <- reactive({
+  #   if (input$HEB_type == "trend") {
+  #     "trend-"
+  #   } else
+  #   if (input$HEB_type == "contrast") {
+  #     "data-"
+  #   } else
+  #   if (input$HEB_type == "similarity") {
+  #     "most-similar-entries-"
+  #   }
+  # })
+  # content <- reactive({
+  #   if (input$HEB_type == "trend") {
+  #     citation.filtered() %>% pull(APAref)
+  #   } else
+  #   if (input$HEB_type == "contrast") {
+  #     connect_OverlapOrUnique()
+  #   } else
+  #   if (input$HEB_type == "similarity") {
+  #     topSimilarity.filtered() %>% head(5)
+  #   }
+  # })
+  # output$download <- downloadHandler(
+  #   filename = function() {
+  #     # paste(filename(), Sys.Date(), ".csv", sep="")
+  # 
+  #     if (input$HEB_type == "trend") {
+  #       paste(filename(), Sys.Date(), ".pdf", sep = "")
+  #     } else
+  #     if (input$HEB_type == "contrast") {
+  #       paste(filename(), Sys.Date(), ".pdf", sep = "")
+  #     } else
+  #     if (input$HEB_type == "similarity") {
+  #       paste(filename(), Sys.Date(), ".pdf", sep = "")
+  #     }
+  #   },
+  #   content = function(file) {
+  #     if (input$HEB_type == "trend") {
+  #       writeLines(content(), file)
+  #     } else
+  #     if (input$HEB_type == "contrast") {
+  #       write.csv(content(), file, row.names = F)
+  #     } else
+  #     if (input$HEB_type == "similarity") {
+  #       write.csv(content(), file, row.names = F)
+  #     }
+  #   }
+  # )
+  
+  
   ## Display plots
   # (static plot, the constant frame that contains only nodes)
   # Plot for hierarchical vertices: p
@@ -725,19 +740,19 @@ server <- function(input, output, session) {
       # nEntry=the number of entries (sum of 1s) that light up each node
       nEntry = as.numeric(colSums(df.filtered() %>% select(-identifier_var)))
     )
-
+    
     vertices <- left_join(vertices, value.df, by = "name", all = T)
     {
       size.breaks <- seq.int(0, max(vertices$nEntry, na.rm = T), length.out = 3) %>% round()
     }
-
+    
     # draw plot
     mygraph <- graph_from_data_frame(hierarchy, vertices = vertices)
     p <- PN_PlotNode(mygraph = mygraph, size.breaks = size.breaks)
     return(p)
   })
-
-
+  
+  
   output$illustration_HEB <- renderPlot({
     
     if (input$HEB_type == "contrast") {
@@ -752,20 +767,20 @@ server <- function(input, output, session) {
           # nEntry=the number of entries (sum of 1s) that light up each node
           nEntry = as.numeric(colSums(df.filtered() %>% select(-identifier_var)))
         )
-
+        
         vertices <- left_join(vertices, value.df, by = "name", all = T)
-
+        
         from <- match(connect_OverlapOrUnique()$from, vertices$name)
         to <- match(connect_OverlapOrUnique()$to, vertices$name)
         Entry_ID <- connect_OverlapOrUnique()$Entry_ID
-
+        
         p_filtered <- PN_PlotEdge_Filter(p(), edge.from = from, edge.to = to, edge.color = Entry_ID)
-
+        
         return(p_filtered)
       }
     }
-
-
+    
+    
     if (input$HEB_type == "trend") {
       # extra: apply cut-off to determine which edges go into the plot
       connect.clean <- connect_OverlapOrUnique() %>%
@@ -773,16 +788,16 @@ server <- function(input, output, session) {
         filter(Proportion >= 20) %>%
         # arrange in ascending order, the weakest edge will be drawn first, the most prevalent edge is drawn on top
         arrange(Proportion)
-
+      
       from.clean <- match(connect.clean$from, vertices$name)
       to.clean <- match(connect.clean$to, vertices$name)
       my_alpha.clean <- connect.clean$Proportion %>% as.numeric()
-
+      
       p_group <- PN_PlotEdge_Group(p(), edge.from = from.clean, edge.to = to.clean, edge.color = my_alpha.clean)
-
+      
       return(p_group)
     }
-
+    
     if (input$HEB_type == "similarity") {
       Similarity.entries1 <- topSimilarity.filtered()$Entry1 %>%
         head(5) %>%
@@ -791,25 +806,25 @@ server <- function(input, output, session) {
         head(5) %>%
         paste(collapse = "|")
       Similarity.Entries <- paste(Similarity.entries1, Similarity.entries2, sep = "|")
-
+      
       Similarity.df.filtered <- df %>% filter(str_detect(Entry_ID, Similarity.Entries))
-
+      
       Similarity.value.df <- data.frame(
         # drop identifier vars
         name = setdiff(names(Similarity.df.filtered), identifier_var),
         # nEntry=the number of entries (sum of 1s) that light up each node
         nEntry = as.numeric(colSums(Similarity.df.filtered %>% select(-identifier_var)))
       )
-
+      
       vertices <- left_join(vertices, Similarity.value.df, by = "name", all = T)
       {
         size.breaks <- seq.int(0, max(vertices$nEntry, na.rm = T), length.out = 3) %>% round()
       }
-
+      
       # draw plot
       mygraph <- graph_from_data_frame(hierarchy, vertices = vertices)
       Similarity.p <- PN_PlotNode(mygraph = mygraph, size.breaks = size.breaks)
-
+      
       Similarity.connect <- PN_GetConnection(
         data = Similarity.df.filtered,
         identifier_var = identifier_var
@@ -818,28 +833,28 @@ server <- function(input, output, session) {
       Similarity.connect_OverlapOrUnique <- PN_GetConnection_OverlapOrUniqueLabel(Similarity.connect)
       Similarity.connect_OverlapOrUnique$Proportion <- as.numeric(Similarity.connect_OverlapOrUnique$Proportion)
       Similarity.connect_OverlapOrUnique$Entry_ID <- as.factor(Similarity.connect_OverlapOrUnique$Entry_ID)
-
+      
       # extra: apply cut-off to determine which edges go into the plot
       connect.clean <- Similarity.connect_OverlapOrUnique %>%
         #>10% of the entries have this edge
         filter(Proportion >= 0) %>%
         # arrange in ascending order, the weakest edge will be drawn first, the most prevalent edge is drawn on top
         arrange(Proportion)
-
+      
       from.clean <- match(connect.clean$from, vertices$name)
       to.clean <- match(connect.clean$to, vertices$name)
       my_alpha.clean <- connect.clean$Proportion %>% as.numeric()
-
+      
       p_group <- PN_PlotEdge_Group(Similarity.p, edge.from = from.clean, edge.to = to.clean, edge.color = my_alpha.clean)
-
+      
       return(p_group)
     }
   })
-
-
+  
+  
   ## DELAY ----
   ### Display output
-
+  
   # Plot
   output$illustration_Delay <- renderPlotly({
     
@@ -850,7 +865,7 @@ server <- function(input, output, session) {
     nTasktype <- delay1$Task_type %>%
       unique() %>%
       length()
-
+    
     pDelay <- ggplot(data = delay1) +
       geom_segment(aes(x = X.a, xend = X.b, y = Y, yend = Y, group = ID_Delay, color = Task_type)) +
       geom_point(aes(x = X.a, y = Y, group = ID_Delay, color = Task_type, text = text)) +
@@ -867,7 +882,7 @@ server <- function(input, output, session) {
         panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(),
         axis.line.x = element_line(colour = "black")
       )
-
+    
     return(hide_guides(ggplotly(pDelay, tooltip = c("text"))))
   })
 }
